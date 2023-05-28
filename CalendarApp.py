@@ -2,7 +2,7 @@ import datetime
 
 #Olay Tanımlama Class'ı
 class Olay:
-    def __init__(self, başlık, tarih, açıklama, hatırlatıcı=None):
+    def _init_(self, başlık, tarih, açıklama, hatırlatıcı=None):
         self.başlık = başlık
         self.tarih = tarih
         self.açıklama = açıklama
@@ -11,7 +11,7 @@ class Olay:
 
 #Kullanıcı Class'ı
 class Kullanıcı:
-    def __init__(self,ad,soyad,kullanıcıAdı,parola,tc_no,telefon_no,mail_adresi,adres):
+    def _init_(self,ad,soyad,kullanıcıAdı,parola,tc_no,telefon_no,mail_adresi,adres):
         self.ad = ad
         self.soyad = soyad
         self.kullanıcıAdı = kullanıcıAdı
@@ -23,8 +23,8 @@ class Kullanıcı:
 
 #Admin Kullanıcı Class'ı ve Fonksiyonları
 class AdminKullanıcı(Kullanıcı):
-    def __init__(self,ad,soyad,kullanıcıAdı,parola,tc_no,telefon_no,mail_adresi,adres):
-        super().__init__(ad,soyad,kullanıcıAdı,parola,tc_no,telefon_no,mail_adresi,adres)
+    def _init_(self,ad,soyad,kullanıcıAdı,parola,tc_no,telefon_no,mail_adresi,adres):
+        super()._init_(ad,soyad,kullanıcıAdı,parola,tc_no,telefon_no,mail_adresi,adres)
 
     def takvimi_görüntüle(self, takvim):
         print("\n----- Tüm Olaylar -----")
@@ -37,7 +37,7 @@ class AdminKullanıcı(Kullanıcı):
 
 #Takvim Class'ı ve Fonksiyonları
 class Takvim:
-    def __init__(self):
+    def _init_(self):
         self.olaylar = []
 
     def olay_ekle(self, olay):
@@ -65,6 +65,48 @@ class Takvim:
             print("|||Olay Başarıyla Güncellendi.|||")
         else:
             print("|||Olay Bulunamadı.|||")
+
+    def hatırlatıcıları_kontrol_et(self):
+        güncel_zaman = datetime.datetime.now()
+        for olay in self.olaylar:
+            if olay.hatırlatıcı and olay.hatırlatıcı <= güncel_zaman:
+                print(f"|||Hatırlatma: {olay.başlık} - {olay.açıklama}|||")
+            elif olay.hatırlatıcı and olay.hatırlatıcı >= güncel_zaman:
+                print("|||Hatırlatıcı Saati Henüz Gelmedi.|||")    
+            else: 
+                print("|||Hatırlatıcı Mevcut Değil.|||")    
+
+#Kullanıcı Kaydı Arayüzünü Çalıştırır
+def kullanıcı_kaydı_arayüzü():
+    print("\n----- Kullanıcı Kayıt Ekranı -----")
+    ad = input("Ad: ")
+    soyad = input("Soyad: ")
+    kullanıcıAdı = input("Kullanıcı Adı: ")
+    parola = input("Parola: ")
+    tc_no = input("T.C. Numaranız: ")
+    telefon_no = input("Telefon Numaranız: ")
+    mail_adresi = input("E-Posta Adresiniz: ")
+    adres = input("Adresiniz: ")
+
+    kullanıcı = Kullanıcı(ad,soyad,kullanıcıAdı,parola,tc_no,telefon_no,mail_adresi,adres)
+
+    print("|||Kullanıcı Kaydı Başarıyla Oluşturuldu.|||")
+    return kullanıcı
+
+#Admin Kaydı Arayüzünü Çalıştırır
+def admin_kaydı_arayüzü():
+    print("\n----- Admin Kayıt Ekranı -----")
+    ad = input("Ad: ")
+    soyad = input("Soyad: ")
+    kullanıcıAdı = input("Kullanıcı Adı: ")
+    parola = input("Parola: ")
+    tc_no = input("T.C. Numaranız: ")
+    telefon_no = input("Telefon Numaranız: ")
+    mail_adresi = input("E-Posta Adresiniz: ")
+    adres = input("Adresiniz: ")
+    admin = AdminKullanıcı(ad,soyad,kullanıcıAdı,parola,tc_no,telefon_no,mail_adresi,adres)
+    print("Admin Kaydı Başarıyla Oluşturuldu.")
+    return admin
 
 # Kullanıcı ve admin kayıtları
 kullanıcılar = []
