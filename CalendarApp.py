@@ -66,6 +66,115 @@ class Takvim:
         else:
             print("|||Olay Bulunamadı.|||")
 
+    def hatırlatıcıları_kontrol_et(self):
+        güncel_zaman = datetime.datetime.now()
+        for olay in self.olaylar:
+            if olay.hatırlatıcı and olay.hatırlatıcı <= güncel_zaman:
+                print(f"|||Hatırlatma: {olay.başlık} - {olay.açıklama}|||")
+            elif olay.hatırlatıcı and olay.hatırlatıcı >= güncel_zaman:
+                print("|||Hatırlatıcı Saati Henüz Gelmedi.|||")    
+            else: 
+                print("|||Hatırlatıcı Mevcut Değil.|||")    
+
+#Kullanıcı Kaydı Arayüzünü Çalıştırır
+def kullanıcı_kaydı_arayüzü():
+    print("\n----- Kullanıcı Kayıt Ekranı -----")
+    ad = input("Ad: ")
+    soyad = input("Soyad: ")
+    kullanıcıAdı = input("Kullanıcı Adı: ")
+    parola = input("Parola: ")
+    tc_no = input("T.C. Numaranız: ")
+    telefon_no = input("Telefon Numaranız: ")
+    mail_adresi = input("E-Posta Adresiniz: ")
+    adres = input("Adresiniz: ")
+
+    kullanıcı = Kullanıcı(ad,soyad,kullanıcıAdı,parola,tc_no,telefon_no,mail_adresi,adres)
+
+    print("|||Kullanıcı Kaydı Başarıyla Oluşturuldu.|||")
+    return kullanıcı
+
+#Admin Kaydı Arayüzünü Çalıştırır
+def admin_kaydı_arayüzü():
+    print("\n----- Admin Kayıt Ekranı -----")
+    ad = input("Ad: ")
+    soyad = input("Soyad: ")
+    kullanıcıAdı = input("Kullanıcı Adı: ")
+    parola = input("Parola: ")
+    tc_no = input("T.C. Numaranız: ")
+    telefon_no = input("Telefon Numaranız: ")
+    mail_adresi = input("E-Posta Adresiniz: ")
+    adres = input("Adresiniz: ")
+    admin = AdminKullanıcı(ad,soyad,kullanıcıAdı,parola,tc_no,telefon_no,mail_adresi,adres)
+    print("Admin Kaydı Başarıyla Oluşturuldu.")
+    return admin
+
+#Giriş Arayüzünü Çalıştırır ve Kullanıcıyı Döndürür
+def giriş_arayüzü(kullanıcılar):
+    print("\n----- Giriş Ekranı -----")
+    kullanıcıAdı = input("Kullanıcı Adı: ")
+    parola = input("Parola: ")
+
+    for kullanıcı in kullanıcılar:
+        if kullanıcı.kullanıcıAdı == kullanıcıAdı and kullanıcı.parola == parola:
+            print("Giriş başarılı.")
+            return kullanıcı
+
+    print("Hatalı Kullanıcı Adı veya Parola.")
+    return giriş_arayüzü(kullanıcılar)
+
+#Olay Oluşturma Arayüzünü Çalıştırır ve Oluşturulan Olayı Döndürür
+def olay_oluşturma_arayüzü(giriş_yapan_kullanıcı):
+    print("\n----- Olay Tanımlama Ekranı -----")
+    başlık = input("Başlık: ")
+    tarih = input("Tarih (YYYY-AA-GG): ")
+    açıklama = input("Açıklama: ")
+    hatırlatıcı_seçimi = input("Hatırlatıcı Eklemek İstiyor Musunuz? (E/H): ")
+
+    if hatırlatıcı_seçimi.lower() == "e":
+        hatırlatıcı_zamanı = input("Hatırlatma Zamanı (YYYY-AA-GG SS:DD): ")
+        hatırlatıcı = datetime.datetime.strptime(hatırlatıcı_zamanı, "%Y-%m-%d %H:%M")
+        olay = Olay(başlık, tarih, açıklama, hatırlatıcı)
+    else:
+        olay = Olay(başlık, tarih, açıklama)
+
+    olay.sahibi = giriş_yapan_kullanıcı  #Olayın Sahibini Giriş Yapan Kullanıcı Olarak Ayarlar
+    return olay
+
+#Tarih Gezinme Arayüzünü Çalıştırır
+def tarih_gezinme_arayüzü(takvim):
+    print("\n----- Takvimi Görüntüle -----")
+    tarih = input("Gidilecek Tarih (YYYY-AA-GG): ")
+    tarihteki_olaylar = takvim.tarihe_göre_olay_ekle(tarih)
+
+    if tarihteki_olaylar:
+        print(f"----- {tarih} Tarihindeki Olaylar -----")
+        for olay in tarihteki_olaylar:
+            print(f"Sahibi: {olay.sahibi.kullanıcıAdı}")  #Olay Sahibinin Kullanıcı Adını Gösterir
+            print(f"Başlık: {olay.başlık}")
+            print(f"Açıklama: {olay.açıklama}")
+            print("-----------------------")
+
+        seçim = input("Olayları Silmek veya Güncellemek İstiyor Musunuz? (E/H): ")
+        if seçim.lower() == "e":
+            seçilen_olay_başlığı = input("Silmek veya Güncellemek İstediğiniz Olayın Başlığını Girin: ")
+            seçilen_olay = None
+            for olay in tarihteki_olaylar:
+                if olay.başlık == seçilen_olay_başlığı:
+                    seçilen_olay = olay
+                    break
+            if seçilen_olay:
+                işlem = input("Olayı Silmek İçin 'S', Güncellemek İçin 'G' Girin: ")
+                if işlem.lower() == "s":
+                    takvim.olay_sil(seçilen_olay)
+                elif işlem.lower() == "g":
+                    yeni_başlık = input("Yeni Başlık: ")
+                    yeni_açıklama = input("Yeni Açıklama: ")
+                    takvim.olay_güncelle(seçilen_olay, yeni_başlık, yeni_açıklama)
+            else:
+                print("Belirtilen Başlıkla Bir Olay Bulunamadı.")
+    else:
+        print("Belirtilen Tarihte Hiç Olay Bulunamadı.")
+
 # Kullanıcı ve admin kayıtları
 kullanıcılar = []
 
