@@ -180,3 +180,63 @@ kullanıcılar = []
 
 # Takvim oluşturma
 takvim = Takvim()
+
+giriş_yapan_kullanıcı = None
+
+#Ana Ekran
+while True:
+    if giriş_yapan_kullanıcı is None:
+        print("\n----- Ana Menü -----")
+        print("1. Giriş")
+        print("2. Kayıt")
+        print("3. Admin Kayıt")
+        print("4. Çıkış")
+
+        seçim = input("Seçiminizi Yapın: ")
+
+        if seçim == "1":
+            if len(kullanıcılar) == 0:
+                print("|||Kullanıcı Kaydı Bulunmamaktadır. Lütfen Önce Kayıt Olun.|||")
+                continue
+            else:
+                giriş_yapan_kullanıcı = giriş_arayüzü(kullanıcılar)
+        elif seçim == "2":
+            kullanıcı = kullanıcı_kaydı_arayüzü()
+            kullanıcılar.append(kullanıcı)
+        elif seçim == "3":
+            admin = admin_kaydı_arayüzü()
+            kullanıcılar.append(admin)
+        elif seçim == "4":
+            exit()
+        else:
+            print("|||Geçersiz Bir Seçim Yaptınız.|||")
+    else:
+
+        #Giriş Yapıldıktan Sonraki Ekran
+        while True:
+            print("\n----- Ana Menü -----")
+            print("1. Takvimi Görüntüle")
+            print("2. Olay Tanımla")
+            print("3. Hatırlatmaları Kontrol Et")
+            print("4. Tüm Olayları Görüntüle (Sadece Admin)")
+            print("5. Çıkış")
+
+            seçim = input("Seçiminizi Yapın: ")
+
+            if seçim == "1":
+                tarih_gezinme_arayüzü(takvim)
+            elif seçim == "2":
+                olay = olay_oluşturma_arayüzü(giriş_yapan_kullanıcı)
+                takvim.olay_ekle(olay)
+            elif seçim == "3":
+                takvim.hatırlatıcıları_kontrol_et()
+            elif seçim == "4":
+                if isinstance(giriş_yapan_kullanıcı, AdminKullanıcı):
+                    giriş_yapan_kullanıcı.takvimi_görüntüle(takvim)
+                else:
+                    print("Bu Seçeneği Sadece Admin Kullanıcıları Kullanabilir.")
+            elif seçim == "5":
+                giriş_yapan_kullanıcı = None
+                break
+            else:
+                print("Geçersiz Bir Seçim Yaptınız.")
